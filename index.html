@@ -1,12 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Mood</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>🌌 Global Mood Constellation</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#000510; --deep:#01091e;
+  --glass:rgba(5,14,40,.82); --gb:rgba(255,255,255,.07); --gb2:rgba(255,255,255,.16);
+  --tp:rgba(215,232,255,.95); --ts:rgba(170,200,255,.55); --td:rgba(120,155,220,.32);
+  --ca:#00d4ff; --cb:#7c3aed; --cc:#f0abfc;
+  --ng:#39ff14; --er:#ff4757; --wa:#ffa502;
+  --fd:'Orbitron',monospace; --fb:'Rajdhani',sans-serif; --fm:'Space Mono',monospace;
+  --blur:blur(28px) saturate(170%); --rad:18px;
+  --ease:cubic-bezier(.4,0,.2,1); --spring:cubic-bezier(.34,1.56,.64,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--void)}
+body{font-family:var(--fb);color:var(--tp);-webkit-tap-highlight-color:transparent}
+button{font-family:var(--fb);border:none;outline:none;background:none;cursor:pointer}
+input,textarea{font-family:var(--fb);outline:none;border:none;background:none}
+::selection{background:rgba(0,212,255,.2)}
+/* BG */
+#bg{position:fixed;inset:0;z-index:0;background:var(--void);transition:background 5s ease}...
+
+</style>
 </head>
 <body>
-    <h1>Welcome to Global Mood</h1>
-    <p>Current date and time is: 2026-02-27 01:35:04 UTC</p>
+<div id="bg"></div>
+<div id="neb"></div>
+<div id="scanlines"></div>
+<div id="starlayer"></div>
+<canvas id="cvs"></canvas>
+<div id="nodeLayer"></div>
+
+<div id="loading">
+  <div class="lring"></div>
+  <div class="ltitle">INITIALIZING</div>
+  <div id="lmsg">Connecting to constellation...</div>
+</div>
+
+<div id="hdr">
+  <div class="hlogo">
+    <div class="horb"></div>
+    <div>
+      <div class="htitle">GLOBAL MOOD</div>
+      <div class="hsub">CONSTELLATION</div>
+    </div>
+  </div>
+  <div class="hright">
+    <div id="wpill">
+      <span class="wemoji">🌡</span>
+      <span class="wlbl">MOOD</span>
+      <span id="wval">--</span>
+    </div>
+    <div id="livebadge">
+      <div class="ldot"></div>
+      <div id="lcount">0</div>
+    </div>
+  </div>
+</div>
+
+<div id="navtabs">
+  <div class="ntab active">MAP</div>
+  <div class="ntab">FEED</div>
+  <div class="ntab">STATS</div>
+</div>
+
+<div id="lp" class="panel">
+  <div class="ph">📊 History</div>
+  <div id="dnac">
+    <div class="hlist">
+      <div class="hi">
+        <span class="he">😊</span>
+        <span class="ht">Happy</span>
+        <span class="htm">2m</span>
+      </div>
+    </div>
+  </div>
+  <div class="dnal">No entries yet</div>
+</div>
+
+<div id="rp" class="panel">
+  <div class="ph">📈 Trending</div>
+  <div class="statbars">
+    <div class="srow">
+      <span class="semoji">😊</span>
+      <div class="strk"><div class="sfll" style="width:0%"></div></div>
+      <span class="scnt">0</span>
+    </div>
+  </div>
+  <div class="ttsec">
+    <div class="ttlb">
+      <span class="ttdot"></span>
+      TIME STRETCH
+    </div>
+    <input id="tsl" type="range" min="1" max="100" value="50">
+    <div id="tdsp">50ms</div>
+    <div class="ttbtns">
+      <div class="ttbtn active">1H</div>
+      <div class="ttbtn">24H</div>
+      <div class="ttbtn">7D</div>
+    </div>
+  </div>
+</div>
+
+<div id="sp" class="panel">
+  <div class="irow">
+    <div class="fw">
+      <input type="text" class="ig" placeholder="👤 Your Name (or @anon)" maxlength="32">
+      <div class="cct">32</div>
+    </div>
+  </div>
+
+  <div id="aib" class="h">
+    <span class="aitag">AI</span>
+    <span id="aitxt">Suggested from your context</span>
+    <button id="aiok">✓</button>
+  </div>
+
+  <div class="ph">😊 How are you feeling?</div>
+  <div id="mgrid">
+    <div class="mb" style="--mc:#FFD700">
+      <div class="mej">😊</div>
+      <div class="mlb">HAPPY</div>
+      <div class="mbi"></div>
+    </div>
+    <div class="mb" style="--mc:#00D4FF">
+      <div class="mej">😌</div>
+      <div class="mlb">CALM</div>
+      <div class="mbi"></div>
+    </div>
+    <div class="mb" style="--mc:#7C3AED">
+      <div class="mej">😍</div>
+      <div class="mlb">LOVED</div>
+      <div class="mbi"></div>
+    </div>
+    <div class="mb" style="--mc:#F0ABFC">
+      <div class="mej">😤</div>
+      <div class="mlb">FIRED</div>
+      <div class="mbi"></div>
+    </div>
+    <div class="mb" style="--mc:#FF4757">
+      <div class="mej">😢</div>
+      <div class="mlb">SAD</div>
+      <div class="mbi"></div>
+    </div>
+  </div>
+
+  <div class="ph">⚡ Intensity</div>
+  <div class="extrarow">
+    <span class="inlb">Lvl</span>
+    <input type="range" id="ins" min="1" max="100" value="50">
+    <span id="invl">50</span>
+    <div class="sep"></div>
+    <button id="locbtn">
+      <span class="lico">📍</span>
+      <span>LOCATION</span>
+    </button>
+  </div>
+
+  <div class="anonrow">
+    <label class="anonlbl">🔒 ANONYMOUS</label>
+    <div class="toggle"></div>
+  </div>
+
+  <button id="sb">
+    <div class="binn">
+      <span class="bic">✦ BROADCAST ✦</span>
+      <div class="bsp"></div>
+    </div>
+  </button>
+  <div id="cdb"><div id="cdf" style="width:0%"></div></div>
+</div>
+
+<div id="modal">
+  <div class="mbox">
+    <div class="mhead">
+      <div>
+        <span class="mbigmoji">😊</span>
+        <div class="mname">Happy User</div>
+        <div style="font-size:.75rem;color:var(--td)">@anon · 2m ago</div>
+      </div>
+      <button class="mclose">✕</button>
+    </div>
+    <div class="mtext">"Feeling great today!"</div>
+    <div class="mmeta">
+      <span class="mtag">📍 San Francisco</span>
+      <span class="mtag">⚡ Level 75</span>
+      <span class="mtag">🔄 3 replies</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// Core application code would go here
+console.log('Global Mood Constellation initialized');
+</script>
 </body>
 </html>
